@@ -2,21 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:overlay_support/overlay_support.dart'; // Import overlay support
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import dotenv package
 import 'login.dart'; // Admin login page
 import 'dashboard.dart'; // Admin dashboard page
 import 'app_router.dart'; // Custom router
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables
+  await dotenv.load();
+
   await Firebase.initializeApp(
     options: FirebaseOptions(
-      apiKey: "AIzaSyDEsRPmH3JBuxWrOo8A8UH-xX5vD_ZsL9s", // Replace with your admin Firebase credentials
-      authDomain: "trashtotreasure-4a540.firebaseapp.com",
-      projectId: "trashtotreasure-4a540",
-      storageBucket: "trashtotreasure-4a540.appspot.com",
-      messagingSenderId: "228866710479",
-      appId: "1:228866710479:web:7b18763b153da9eaee90ba",
-      measurementId: "G-LED6WMRB15",
+      apiKey: dotenv.env['FIREBASE_API_KEY']!,
+      authDomain: dotenv.env['FIREBASE_AUTH_DOMAIN']!,
+      projectId: dotenv.env['FIREBASE_PROJECT_ID']!,
+      storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET']!,
+      messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID']!,
+      appId: dotenv.env['FIREBASE_APP_ID']!,
+      measurementId: dotenv.env['FIREBASE_MEASUREMENT_ID']!,
     ),
   );
 
@@ -37,8 +42,8 @@ Future<void> setPersistenceForAdmin() async {
     if (user != null) {
       final String? email = user.email;
 
-      // Check if the user is the admin (replace with actual admin email or role check logic)
-      if (email == "imamaaamjad@gmail.com") {
+      // Check if the user is the admin (loaded from .env)
+      if (email == dotenv.env['ADMIN_EMAIL']) {
         try {
           await auth.setPersistence(Persistence.LOCAL); // Ensure session is persisted for admin
           print("Session persistence set for admin user.");
